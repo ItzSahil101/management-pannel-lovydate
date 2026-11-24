@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import {
   Search,
@@ -114,7 +113,8 @@ const actionOptions: {
   {
     value: "unban",
     label: "Remove Permanent Ban",
-    description: "Remove the permanent ban and restore eligible account access.",
+    description:
+      "Remove the permanent ban and restore eligible account access.",
   },
   {
     value: "deactivate",
@@ -393,9 +393,7 @@ export default function UsersPage() {
     if (action.value === "suspend") return selected?.status === "active";
 
     if (action.value === "ban") {
-      return (
-        selected?.status === "active" || selected?.status === "suspended"
-      );
+      return selected?.status === "active" || selected?.status === "suspended";
     }
 
     return true;
@@ -464,7 +462,8 @@ export default function UsersPage() {
           </div>
         )}
 
-        <div className="overflow-x-auto">
+        {/* Desktop table */}
+        <div className="hidden md:block overflow-x-auto">
           <table className="w-full text-left min-w-[700px]">
             <thead>
               <tr className="text-xs text-zinc-500 border-b border-white/[0.07]">
@@ -475,7 +474,6 @@ export default function UsersPage() {
                 <th className="px-5 py-4 font-medium">ACTION</th>
               </tr>
             </thead>
-
             <tbody>
               {loading ? (
                 <tr>
@@ -503,21 +501,16 @@ export default function UsersPage() {
                       <p className="text-sm text-white font-medium">
                         {user.displayName || "Unnamed User"}
                       </p>
-                      <p className="text-xs text-zinc-500 mt-1">{user.email}</p>
+                      <p className="text-xs text-zinc-500 mt-1 break-all">
+                        {user.email}
+                      </p>
                     </td>
-
                     <td className="px-5 py-4 text-xs text-zinc-400">
-                      <span title={user.id}>
-                        {user.id.length > 16
-                          ? `${user.id.slice(0, 8)}...${user.id.slice(-6)}`
-                          : user.id}
-                      </span>
+                      {user.id.slice(0, 8)}...{user.id.slice(-6)}
                     </td>
-
                     <td className="px-5 py-4 text-xs text-zinc-400">
                       {formatDate(user.createdAt)}
                     </td>
-
                     <td className="px-5 py-4">
                       <span
                         className={`text-xs px-2.5 py-1 rounded-full capitalize ${statusStyle(user.status)}`}
@@ -525,14 +518,12 @@ export default function UsersPage() {
                         {user.status}
                       </span>
                     </td>
-
                     <td className="px-5 py-4">
                       <button
                         onClick={() => openUser(user)}
                         className="flex items-center gap-2 text-xs text-zinc-400 hover:text-pink-400"
                       >
-                        <Eye size={15} />
-                        View
+                        <Eye size={15} /> View
                       </button>
                     </td>
                   </tr>
@@ -540,6 +531,66 @@ export default function UsersPage() {
               )}
             </tbody>
           </table>
+        </div>
+
+        {/* Mobile cards */}
+        <div className="md:hidden divide-y divide-white/[0.07]">
+          {loading ? (
+            <div className="py-12 text-center text-zinc-500 text-sm">
+              <Loader2 className="animate-spin inline mr-2" size={17} />
+              Loading users...
+            </div>
+          ) : users.length === 0 ? (
+            <div className="py-12 text-center text-sm text-zinc-500">
+              No users found.
+            </div>
+          ) : (
+            users.map((user) => (
+              <div
+                key={user.id}
+                className="p-4 space-y-3 hover:bg-white/[0.02]"
+              >
+                <div className="flex items-start justify-between gap-3">
+                  <div className="min-w-0 flex-1">
+                    <p className="text-sm font-semibold text-white break-words">
+                      {user.displayName || "Unnamed User"}
+                    </p>
+                    <p className="text-xs text-zinc-500 mt-1 break-all">
+                      {user.email}
+                    </p>
+                  </div>
+                  <span
+                    className={`shrink-0 text-[10px] px-2.5 py-1 rounded-full capitalize ${statusStyle(user.status)}`}
+                  >
+                    {user.status}
+                  </span>
+                </div>
+
+                <div className="flex items-center justify-between gap-3 pt-2 border-t border-white/[0.05]">
+                  <div className="min-w-0">
+                    <p className="text-[10px] text-zinc-600 uppercase tracking-wider">
+                      Joined
+                    </p>
+                    <p className="text-xs text-zinc-400 mt-1">
+                      {formatDate(user.createdAt)}
+                    </p>
+                  </div>
+
+                  <button
+                    onClick={() => openUser(user)}
+                    className="shrink-0 flex items-center gap-2 px-3 py-2 rounded-lg bg-pink-500/10 text-pink-400 hover:bg-pink-500/20 text-xs font-medium transition"
+                  >
+                    <Eye size={14} />
+                    View Profile
+                  </button>
+                </div>
+
+                <p className="text-[10px] text-zinc-600 font-mono break-all">
+                  ID: {user.id}
+                </p>
+              </div>
+            ))
+          )}
         </div>
 
         {hasMore && !loading && (
@@ -1074,9 +1125,8 @@ export default function UsersPage() {
                       {actionType === "unban" && (
                         <div className="rounded-xl border border-emerald-500/20 bg-emerald-500/[0.05] p-4">
                           <p className="text-xs text-zinc-300 leading-5">
-                            This removes the permanent ban. Any remaining
-                            active suspension will still prevent account
-                            access.
+                            This removes the permanent ban. Any remaining active
+                            suspension will still prevent account access.
                           </p>
                         </div>
                       )}

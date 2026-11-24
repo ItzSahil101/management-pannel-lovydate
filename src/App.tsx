@@ -21,10 +21,10 @@ function DashboardLayout() {
   const { admin, logout } = useAuth()
 
   return (
-    <div className="min-h-screen bg-[#09090b] flex">
+    <div className="min-h-screen w-full overflow-x-hidden bg-[#09090b] flex">
       <Sidebar />
 
-      <main className="flex-1 min-w-0">
+      <main className="flex-1 min-w-0 w-0 overflow-x-hidden">
         <div className="flex items-center justify-between pr-6">
           <div className="flex-1 min-w-0">
             <Topbar />
